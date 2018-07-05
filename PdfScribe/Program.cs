@@ -75,7 +75,7 @@ namespace PdfScribe
             {
                 // We couldn't delete, or create a file
                 // because it was in use
-                logEventSource.TraceEvent(TraceEventType.Error, 
+                logEventSource.TraceEvent(TraceEventType.Error,
                                           (int)TraceEventType.Error,
                                           errorDialogInstructionCouldNotWrite +
                                           Environment.NewLine +
@@ -90,8 +90,8 @@ namespace PdfScribe
                 // because it was set to readonly
                 // or couldn't create a file
                 // because of permissions issues
-                logEventSource.TraceEvent(TraceEventType.Error, 
-                                          (int)TraceEventType.Error, 
+                logEventSource.TraceEvent(TraceEventType.Error,
+                                          (int)TraceEventType.Error,
                                           errorDialogInstructionCouldNotWrite +
                                           Environment.NewLine +
                                           "Exception message: " + unauthorizedEx.Message);
@@ -104,8 +104,8 @@ namespace PdfScribe
             catch (ExternalException ghostscriptEx)
             {
                 // Ghostscript error
-                logEventSource.TraceEvent(TraceEventType.Error, 
-                                          (int)TraceEventType.Error, 
+                logEventSource.TraceEvent(TraceEventType.Error,
+                                          (int)TraceEventType.Error,
                                           String.Format(errorDialogTextGhostScriptConversion, ghostscriptEx.ErrorCode.ToString()) +
                                           Environment.NewLine +
                                           "Exception message: " + ghostscriptEx.Message);
@@ -120,15 +120,26 @@ namespace PdfScribe
                 {
                     File.Delete(standardInputFilename);
                 }
-                catch 
+                catch
                 {
                     logEventSource.TraceEvent(TraceEventType.Warning,
                                               (int)TraceEventType.Warning,
                                               String.Format(warnFileNotDeleted, standardInputFilename));
                 }
                 logEventSource.Flush();
+
             }
+
+            switch(Properties.Settings.Default.RunFileDisabled)
+            {
+                case (false):
+                    string RunFileLocation = Properties.Settings.Default.RunFile;
+                    ExecuteCommand(RunFileLocation);
+                    break;
+            }
+
         }
+
 
         /// <summary>
         /// All unhandled exceptions will bubble their way up here -
@@ -258,5 +269,32 @@ namespace PdfScribe
                             MessageBoxOptions.DefaultDesktopOnly);
             
         }
+
+
+        // credit to steinar
+        static void ExecuteCommand(string command)
+        {
+            var processInfo = new ProcessStartInfo("cmd.exe", "/c " + Convert.ToChar(34) + command + Convert.ToChar(34));
+            processInfo.CreateNoWindow = true;
+            processInfo.UseShellExecute = false;
+            processInfo.RedirectStandardError = true;
+            processInfo.RedirectStandardOutput = true;
+
+            var process = Process.Start(processInfo);
+
+            process.OutputDataReceived += (object sender, DataReceivedEventArgs e) =>
+                Console.WriteLine("output>>" + e.Data);
+            process.BeginOutputReadLine();
+
+            process.ErrorDataReceived += (object sender, DataReceivedEventArgs e) =>
+                Console.WriteLine("error>>" + e.Data);
+            process.BeginErrorReadLine();
+
+            process.WaitForExit();
+
+            Console.WriteLine("ExitCode: {0}", process.ExitCode);
+            process.Close();
+        }
+
     }
 }
