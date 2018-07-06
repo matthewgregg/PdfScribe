@@ -3,10 +3,16 @@
   <Profiles />
   <Settings>
     <Setting Name="OutputFile" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">%Temp%\PDFSCRIBE.PDF</Value>
+      <Value Profile="(Default)">%UserProfile%\PDFSCRIBE.PDF</Value>
     </Setting>
     <Setting Name="AskUserForOutputFilename" Type="System.Boolean" Scope="Application">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
+    </Setting>
+    <Setting Name="RunFile" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%UserProfile%\test.bat</Value>
+    </Setting>
+    <Setting Name="RunFileDisabled" Type="System.Boolean" Scope="Application">
+      <Value Profile="(Default)">True</Value>
     </Setting>
   </Settings>
 </SettingsFile>
