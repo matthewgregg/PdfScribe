@@ -1,4 +1,4 @@
-# PdfScribe v1.0.5
+# PdfScribe v1.0.6-alpha
 
 PdfScribe is a PDF virtual printer. Check the [releases](https://github.com/matthewgregg/PdfScribe/releases) page for this project to download a prebuilt MSI package.
 
